@@ -17,7 +17,6 @@ File inclusion
 Sent file(s) may include other files.
 
 <pre><code>
-#include constants.forth
 #include registers.forth
 </code></pre>
 
