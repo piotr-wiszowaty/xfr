@@ -30,12 +30,12 @@ xfr [OPTIONS] INPUT-FILE
 
 OPTIONS:
 
-  -h, --help            show this help message and exit
-  -c, --skip-comments   do not send comments
-  -e, --skip-empty-lines
-                        do not send empty lines
-  -s, --print-statistics
-                        print transfer statistics
+    -h, --help            show this help message and exit
+    -c, --skip-comments   do not send comments
+    -e, --skip-empty-lines
+                          do not send empty lines
+    -s, --print-statistics
+                          print transfer statistics
 
 Example
 -------
