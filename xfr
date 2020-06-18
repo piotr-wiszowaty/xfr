@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+
+# Copyright 2020 Piotr Wiszowaty
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import argparse
+import datetime
+import re
+import sys
+
+parser = argparse.ArgumentParser()
+parser.add_argument("file", metavar="FILE", help="file to send")
+parser.add_argument("-c", "--skip-comments", action="store_true", default=False, help="skip sending comments")
+parser.add_argument("-e", "--skip-empty-lines", action="store_true", default=False, help="skip sending empty lines")
+parser.add_argument("-s", "--print-statistics", action="store_true", default=False, help="print transfer statistics")
+args = parser.parse_args()
+
+def xfr(parent_fname, parent_lineno, fname):
+    lineno = 1
+    n_bytes_sent = 0
+    try:
+        for line in open(fname, "rt"):
+            if line.startswith("#include "):
+                n_bytes_sent += xfr(fname, lineno, line[9:].strip())
+            elif args.skip_comments and re.match(r"^\s*\\ .*", line):
+                continue
+            elif args.skip_empty_lines and re.match(r"^\s*$", line):
+                continue
+            else:
+                sys.stdout.write(line)
+                n_bytes_sent += len(line)
+                response = sys.stdin.readline()
+                sys.stderr.write(response)
+                if not response.endswith("ok.\n"):
+                    sys.stderr.write(f"*** {fname}({lineno}): compilation error ***")
+                    sys.exit(1)
+            lineno += 1
+        return n_bytes_sent
+    except OSError as e:
+        if parent_fname is not None:
+            sys.stderr.write(f"*** {parent_fname}({parent_lineno}): {e} ***")
+        else:
+            sys.stderr.write(f"*** {fname}: {e} ***")
+        sys.exit(1)
+
+t0 = datetime.datetime.now()
+n = xfr(None, 0, args.file)
+elapsed_time = datetime.datetime.now() - t0
+speed = int(n / elapsed_time.total_seconds())
+if args.print_statistics:
+    sys.stderr.write(f"*** elapsed time: {elapsed_time} ({speed} bytes/s) ***")
