@@ -8,7 +8,7 @@ Transmission synchronisation
 ----------------------------
 
 After sending each line xfr waits for the Mecrisp Forth to respond with an
-`ok.`. This allows successful transfer of files at high baud rates and without
+`ok.`. This allows successful transfer of files at high baud rates without
 hardware flow control.
 
 File inclusion
