@@ -33,6 +33,8 @@ OPTIONS:
     -c, --skip-comments   do not send comments
     -e, --skip-empty-lines
                           do not send empty lines
+    -I DIR, --include-path DIR
+                          append directory to include paths
     -s, --print-statistics
                           print transfer statistics
 
@@ -40,5 +42,5 @@ Example
 -------
 
 ```
-picocom -b 1000000 /dev/ttyACM0 --imap lfcrlf,crcrlf --omap delbs,crlf --send-cmd "xfr -c -e -s"
+picocom -b 1000000 /dev/ttyACM0 --imap lfcrlf,crcrlf --omap delbs,crlf --send-cmd "xfr -c -e -s -I /usr/include/STM32"
 ```
